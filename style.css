@@ -60,6 +60,8 @@ a {
 	resize: none;
 	wrap: off;
 	float: right;
+	overflow-y: auto;
+	line-height: 1.5;
 }
 #output {
 	position: absolute;

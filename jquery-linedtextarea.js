@@ -8,42 +8,35 @@
 (function($) {
 	$.fn.linedtextarea = function() {
 		/*
-		 * Helper function to make sure the line numbers are always kept up to
-		 * the current system
+		 * Helper function to ensure line numbers match the current content
 		 */
-		var fillOutLines = function(linesDiv, h, lineNo) {
-			while (linesDiv.height() < h) {
-				linesDiv.append("<div>" + lineNo + "</div>");
-				lineNo++;
+		var updateLineNumbers = function(linesDiv, totalLines) {
+			linesDiv.empty();
+			for (let i = 1; i <= totalLines; i++) {
+				linesDiv.append("<div>" + i + "</div>");
 			}
-			return lineNo;
 		};
 
 		return this.each(function() {
-			var lineNo = 1;
 			var textarea = $(this);
 
 			/* Wrap the text area in the elements we need */
-			textarea.wrap("<div class='linedtextarea' style='height:100%; overflow:hidden'></div>");
-			textarea.width("97%");
-			textarea.parent().prepend("<div class='lines' style='width:3%'></div>");
+			textarea.wrap("<div class='linedtextarea' style='height:100%; overflow:hidden; display:flex'></div>");
+			textarea.css({ width: "97%", resize: "none", overflow: "auto" });
+			textarea.parent().prepend("<div class='lines' style='width:3%; overflow:hidden; text-align:right; padding-right:5px;'></div>");
 			var linesDiv = textarea.parent().find(".lines");
 
-			var scroll = function(tn) {
-				var domTextArea = $(this)[0];
-				var scrollTop = domTextArea.scrollTop;
-				var clientHeight = domTextArea.clientHeight;
-				linesDiv.css({
-					'margin-top' : (-scrollTop) + "px"
-				});
-				lineNo = fillOutLines(linesDiv, scrollTop + clientHeight,
-						lineNo);
+			var update = function() {
+				var lineCount = textarea.val().split("\n").length;
+				updateLineNumbers(linesDiv, lineCount);
+				linesDiv.css('margin-top', -textarea.scrollTop() + "px");
 			};
-			/* React to the scroll event */
-			textarea.scroll(scroll);
-			$(window).resize(function() { textarea.scroll(); });
-			/* We call scroll once to add the line numbers */
-			textarea.scroll();
+
+			/* React to the scroll and input events */
+			textarea.on('scroll input', update);
+			$(window).resize(update);
+			/* Initial call to set up the line numbers */
+			update();
 		});
 	};
 

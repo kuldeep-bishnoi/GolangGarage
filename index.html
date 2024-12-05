@@ -1,28 +1,62 @@
-<html>
-	<head>
-		<meta charset="utf-8">
-        <title>Go Playground</title>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Go Playground</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="wasm_exec.js"></script>
+    <script src="wasm_extra.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lz-string@1.4.4/libs/lz-string.min.js"></script>
+    <script src="jquery-linedtextarea.js"></script>
+    <script src="playground.js"></script>
+    <script src="sharing.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.21.2/min/vs/loader.js"></script>
+</head>
+<body>
+    <div id="editor-container">
+        <div id="banner">
+            <div id="head" itemprop="name">
+                <a href="#" class="btn-shine">Golang Garage</a>
+            </div>
+            <div id="controls">
+                <input type="button" value="Loading..." id="run" disabled />
+                <input type="button" value="Format" id="fmt" style="display:none;" disabled>
+                <input type="button" value="Share" id="share">
+                <input type="text" id="shareURL" style="display:none;">
+            </div>
+        </div>
+        <div id="wrap">
+            <div id="code" style="height: 100%; width: 100%;"></div>
+        </div>
+        <div id="output"></div>
+    </div>
+    <script>
+        require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.21.2/min/vs' }});
+        require(['vs/editor/editor.main'], function() {
+            window.editor = monaco.editor.create(document.getElementById('code'), {
+                value: `package main
 
-        <link rel="stylesheet" href="style.css">
-		<script src="wasm_exec.js"></script>
-        <script src="wasm_extra.js"></script>
+import (
+    "fmt"
+)
 
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/lz-string@1.4.4/libs/lz-string.min.js"></script>
-        <script src="jquery-linedtextarea.js"></script>
-        <script src="playground.js"></script>
-        <script src="sharing.js"></script>
+func main() {
+    fmt.Println("The Golang Garage is open!")
+}
+`,
+                language: 'go',
+                theme: 'vs-dark',
+                automaticLayout: true
+            });
 
-		<script>
             $(document).ready(function() {
                 initSharing({
                     codeEl: '#code',
                     shareEl: '#share',
                     shareURLEl: '#shareURL',
                 });
-
-                $('#code').linedtextarea();
-                $('#code').attr('wrap', 'off');
 
                 if (!WebAssembly || !WebAssembly.instantiate) {
                     $('#run').val('Unsupported Browser');
@@ -121,7 +155,7 @@ pkg/syscall.a`.split("\n");
                             Run: (body, output) => {
                                 $('#controls input').attr('disabled', true);
 
-                                writeToGoFilesystem('/main.go', body);
+                                writeToGoFilesystem('/main.go', window.editor.getValue());
                                 output({
                                     Kind: 'start',
                                 });
@@ -171,13 +205,13 @@ pkg/syscall.a`.split("\n");
                     $('#fmt').click(() => {
                         $('#controls input').attr('disabled', true);
 
-                        writeToGoFilesystem('/main.go', $('#code').val());
+                        writeToGoFilesystem('/main.go', window.editor.getValue());
                         goStderr = (buf) => console.log(decoder.decode(buf));
                         goStdout = goStderr;
                         exec(cmds['gofmt'], ['-w', 'main.go'])
                             .then((code) => {
                                 if (!code) {
-                                    $('#code').val(decoder.decode(readFromGoFilesystem('main.go')));
+                                    window.editor.setValue(decoder.decode(readFromGoFilesystem('main.go')));
                                 }
                             })
                             .finally(() => $('#controls input').attr('disabled', false))
@@ -187,37 +221,7 @@ pkg/syscall.a`.split("\n");
                     $('#controls input').attr('disabled', false);
                 });
             });
-		</script>
-	</head>
-	<body itemscope itemtype="http://schema.org/CreativeWork">
-		<div id="banner">
-			<div id="head" itemprop="name">
-                <a href="#" class="btn-shine">Golang Garage</a>
-            </div>
-			<div id="controls">
-				<input type="button" value="Loading..." id="run" disabled />
-                <input type="button" value="Format" id="fmt" style="display:none;" disabled>
-				<input type="button" value="Share" id="share">
-				<input type="text" id="shareURL" style="display:none;">
-			</div>
-		</div>
-		<div id="wrap">
-			<textarea itemprop="description" id="code" name="code" autocorrect="off" autocomplete="off" autocapitalize="off" spellcheck="false">package main
-
-import (
-    &#34;fmt&#34;
-    &#34;runtime&#34;
-    &#34;syscall/js&#34;
-)
-
-func main() {
-    fmt.Println(&#34;This WASM program was compiled in the browser using&#34;, runtime.Version())
-    
-    js.Global().Get(&#34;console&#34;).Call(&#34;warn&#34;, &#34;Hello world&#34;)
-}
-
-</textarea>
-		</div>
-		<div id="output"></div>
-	</body>
+        });
+    </script>
+</body>
 </html>
