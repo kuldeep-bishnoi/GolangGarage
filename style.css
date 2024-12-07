@@ -21,8 +21,6 @@ a {
 	bottom: 25%;
 	left: 0;
 	right: 0;
-
-	background: #FFD;
 }
 #about {
 	display: none;
@@ -60,8 +58,7 @@ a {
 	resize: none;
 	wrap: off;
 	float: right;
-	overflow-y: auto;
-	line-height: 1.5;
+	transition: all 0.9s ease-in-out;
 }
 #output {
 	position: absolute;
@@ -86,7 +83,7 @@ a {
 	right: 0;
 	top: 0;
 	height: 50px;
-	background-color: #E0EBF5;
+	
 }
 #head {
 	float: left;
@@ -176,11 +173,6 @@ input[type=button]:disabled {
 
 /* From Uiverse.io by neerajbaniwal */
 .btn-shine {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  padding: 12px 48px;
   color: #fff;
   background: linear-gradient(to right, #9f9f9f 0, #fff 10%, #868686 20%);
   background-position: 0;
@@ -238,4 +230,22 @@ input[type=button]:disabled {
   100% {
     background-position: 180px;
   }
+}
+
+
+.dark {
+	background-color: #121212;
+	color: #fff;
+}
+.light {
+	background-color: #fff;
+	color: #000;
+}
+
+.navbar{
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 95%;
+	margin: 0 auto;
 }

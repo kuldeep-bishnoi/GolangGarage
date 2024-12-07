@@ -13,19 +13,25 @@
     <script src="playground.js"></script>
     <script src="sharing.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.21.2/min/vs/loader.js"></script>
+    <link rel="icon" type="image/png" href="https://go.dev/blog/go-brand/Go-Logo/PNG/Go-Logo_Aqua.png">
 </head>
 <body>
     <div id="editor-container">
-        <div id="banner">
-            <div id="head" itemprop="name">
-                <a href="#" class="btn-shine">Golang Garage</a>
-            </div>
+        <div id="banner" class="navbar">
+           
+            
             <div id="controls">
                 <input type="button" value="Loading..." id="run" disabled />
                 <input type="button" value="Format" id="fmt" style="display:none;" disabled>
                 <input type="button" value="Share" id="share">
                 <input type="text" id="shareURL" style="display:none;">
             </div>
+            <div id="head" itemprop="name">
+                <a href="#" class="btn-shine">Golang Garage</a>
+            </div>
+            <button id="theme-toggle">Toggle Theme</button>
+            </div>
+           
         </div>
         <div id="wrap">
             <div id="code" style="height: 100%; width: 100%;"></div>
@@ -47,8 +53,19 @@ func main() {
 }
 `,
                 language: 'go',
-                theme: 'vs-dark',
-                automaticLayout: true
+                theme: 'vs-light',
+                automaticLayout: true,
+                minimap: { enabled: false },
+                //disable the scrollbar
+                scrollbar: {
+                    alwaysConsumeMouseWheel: false
+                },
+                //change the font
+                fontFamily: "'JetBrains Mono', 'Fira Code', Consolas, 'Courier New', monospace",
+        fontSize: 18,
+        fontLigatures: true,
+                cursorBlinking: 'smooth',
+        cursorSmoothCaretAnimation: true,
             });
 
             $(document).ready(function() {
@@ -221,6 +238,15 @@ pkg/syscall.a`.split("\n");
                     $('#controls input').attr('disabled', false);
                 });
             });
+        });
+
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark');
+            document.getElementById('banner').classList.toggle('dark');
+            document.getElementById('head').classList.toggle('dark');
+           //change the theme of the editor
+           monaco.editor.setTheme(document.body.classList.contains('dark') ? 'vs-dark' : 'vs-light');
         });
     </script>
 </body>
