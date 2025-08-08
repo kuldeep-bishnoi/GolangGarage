@@ -264,9 +264,12 @@ function PlaygroundOutput(el) {
 			m = s.pop();
 		}
 
-		m = m.replace(/&/g, '&amp;');
-		m = m.replace(/</g, '&lt;');
-		m = m.replace(/>/g, '&gt;');
+		// Properly escape HTML to prevent XSS
+		m = m.replace(/&/g, '&amp;')
+			.replace(/</g, '&lt;')
+			.replace(/>/g, '&gt;')
+			.replace(/"/g, '&quot;')
+			.replace(/'/g, '&#x27;');
 
 		var needScroll = (el.scrollTop + el.offsetHeight) == el.scrollHeight;
 
