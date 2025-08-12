@@ -264,15 +264,11 @@ function PlaygroundOutput(el) {
 			m = s.pop();
 		}
 
-		m = m.replace(/&/g, '&amp;');
-		m = m.replace(/</g, '&lt;');
-		m = m.replace(/>/g, '&gt;');
-
 		var needScroll = (el.scrollTop + el.offsetHeight) == el.scrollHeight;
 
 		var span = document.createElement('span');
 		span.className = cl;
-		span.innerHTML = m;
+		span.textContent = m;
 		el.appendChild(span);
 
 		if (needScroll)
